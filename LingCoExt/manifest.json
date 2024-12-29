@@ -1,0 +1,17 @@
+{
+    "manifest_version": 3,
+    "name": "Lingco Extension",
+    "version": "1.0",
+    "description": "Automatically Answer.",
+    "permissions": ["scripting", "activeTab"],"host_permissions": ["*://*.lingco.io/*"]
+,
+    
+    
+ 
+"content_scripts": [
+    {
+        "matches": ["*://*.lingco.io/*"],
+        "js": ["content.js"]
+    }
+]
+}
