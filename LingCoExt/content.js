@@ -106,51 +106,53 @@
         alert(`Collected ${wordsAndDefinitions.length} words and definitions.`);     
     }      
 
-    function solveQuestion() {         
-        const promptElement = document.querySelector(".session-title p");        
-        const answerButtons = document.querySelectorAll(".session-answer-choices button");  
-
+    function solveQuestion() {
+        const promptElement = document.querySelector(".session-title p");
+        const answerButtons = document.querySelectorAll(".session-answer-choices button");
+    
         const audioPrompt = document.querySelector(".session-audio-button-new");
-        console.log("check for audio");
         if (audioPrompt) {
-            console.log("audio prompt found:", audioPrompt);
-        }else{
-            console.log("no audio prompt found");
-        }
-
-       if (audioPrompt && answerButtons) {
-        console.log("in listen mode");
-        const audioButtons = document.querySelectorAll(".btn line full-width");
-        if (audioButtons) {
-            console.log("audio buttons found:", audioButtons);
-            }else{
-                console.log("no audio buttons found");
-            }
-            if (answerButtons) {
-                console.log("answer buttons found:", answerButtons);
-                }else{
-                    console.log("no answer buttons found");
-                }
-                answerButtons.forEach(button => {
+            console.log("Audio prompt found:", audioPrompt);
+    
+            const audioButtons = document.querySelectorAll(".btn.line.full-width");
+            if (audioButtons && audioButtons.length > 0) {
+                console.log("Audio buttons found:", audioButtons);
+    
+              /*  answerButtons.forEach(button => {
                     const answerText = button.innerText.trim().toLowerCase();
-                    console.log("Found answer button for listen mode:", answerText);
-                    const matchedEntry = wordsAndDefinitions.find(item => item.definition.toLowerCase() === answerText);
-                
+                    const matchedEntry = wordsAndDefinitions.find(
+                        item => item.definition.toLowerCase() === answerText
+                    );
+    
                     if (matchedEntry) {
-                      
                         button.innerText = `${answerText} (${matchedEntry.word})`;
-                        console.log("Found term for audio:", matchedEntry.word);
+                        console.log("Matched term for audio:", matchedEntry.word);
                     } else {
                         console.warn("No matching definition found for:", answerText);
                     }
-                });
-                
-       }else{
-        const prompt = promptElement.innerText.trim();         
-        console.log("Prompt:", prompt);         
+                });*/
+            } else {
+                console.log("No audio buttons found");
+            }
+            const potPrompt = document.querySelector(".session-title p");       
+            console.log("Pot prompt: ", potPrompt);    
+             
+            const promptSpanish = wordsAndDefinitions.find(item => item.definition === potPrompt.innerText.toLowerCase());
+            if (promptSpanish) {
+                potPrompt.innerText = `${potPrompt.innerText} (${promptSpanish.word})`;
+            }
+    }else{
+        const prompt = promptElement.innerText.trim();     
+        const potPrompt = document.getElementsByClassName(".session-title p");    
+        console.log("Prompt:", prompt);     
+        console.log("Pot prompt: ", potPrompt);    
         clearPreviousActions();   
-        
-               
+        const promptSpanish = wordsAndDefinitions.find(item => item.definition === potPrompt);
+        if (promptSpanish) {
+            potPrompt.innerText = `${potPrompt.innerText} (${promptSpanish.word})`;
+        }
+       
+
 
         let answerFound = false;          
         console.log("answer not found");
