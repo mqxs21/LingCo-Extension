@@ -17,8 +17,7 @@
         popup.style.padding = "8px";         
         popup.style.zIndex = 1000;         
         popup.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";         
-        popup.style.transition = "height 0.3s, width 0.3s";        
-
+        popup.style.transition = "height 0.3s, width 0.3s";       
         const toggleButton = document.createElement("button");         
         toggleButton.innerText = "Minimize";         
         toggleButton.style.marginBottom = "6px";         
