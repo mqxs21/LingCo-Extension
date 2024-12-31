@@ -3,7 +3,7 @@
     let lastHighlightedButton = null;     
     let observer = null;     
     let typingTimeouts = [];     
-    let typeSpeed = 2;     
+    let typeSpeed = 5;     
     let isMinimized = false; 
 
     function initializePopup() {         
@@ -84,6 +84,7 @@
         const audioLabel = document.createElement("label");
         audioLabel.innerText = "Null";
 
+
     }      
 
     function getWordsAndDefinitions() {         
@@ -117,19 +118,24 @@
             if (audioButtons && audioButtons.length > 0) {
                 console.log("Audio buttons found:", audioButtons);
     
-              /*  answerButtons.forEach(button => {
+              answerButtons.forEach(button => {
                     const answerText = button.innerText.trim().toLowerCase();
+                    const ogText = answerText;
                     const matchedEntry = wordsAndDefinitions.find(
                         item => item.definition.toLowerCase() === answerText
                     );
     
                     if (matchedEntry) {
-                        button.innerText = `${answerText} (${matchedEntry.word})`;
+                        const matchedWord = document.createElement("span");
+                        matchedWord.innerText = ` (${matchedEntry.word})`;
+                        button.appendChild(matchedWord);
                         console.log("Matched term for audio:", matchedEntry.word);
                     } else {
                         console.warn("No matching definition found for:", answerText);
                     }
-                });*/
+
+                    
+                });
             } else {
                 console.log("No audio buttons found");
             }
