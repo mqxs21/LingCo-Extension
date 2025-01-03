@@ -73,7 +73,7 @@
 
         typeSpeedInput.onchange = () => {             
             typeSpeed = parseInt(typeSpeedInput.value);             
-            console.log("Type Speed:", typeSpeed);         
+          //  console.log("Type Speed:", typeSpeed);         
         };                   
 
         popup.appendChild(startButton);         
@@ -100,7 +100,7 @@
             }         
         });          
 
-        console.log("Words and Definitions:", wordsAndDefinitions);         
+       // console.log("Words and Definitions:", wordsAndDefinitions);         
         localStorage.setItem("wordsAndDefinitions", JSON.stringify(wordsAndDefinitions));          
 
         alert(`Collected ${wordsAndDefinitions.length} words and definitions.`);     
@@ -112,11 +112,11 @@
     
         const audioPrompt = document.querySelector(".session-audio-button-new");
         if (audioPrompt) {
-            console.log("Audio prompt found:", audioPrompt);
+         //   console.log("Audio prompt found:", audioPrompt);
     
             const audioButtons = document.querySelectorAll(".btn.line.full-width");
             if (audioButtons && audioButtons.length > 0) {
-                console.log("Audio buttons found:", audioButtons);
+              //  console.log("Audio buttons found:", audioButtons);
     
               answerButtons.forEach(button => {
                     const answerText = button.innerText.trim().toLowerCase();
@@ -129,18 +129,18 @@
                         const matchedWord = document.createElement("span");
                         matchedWord.innerText = ` (${matchedEntry.word})`;
                         button.appendChild(matchedWord);
-                        console.log("Matched term for audio:", matchedEntry.word);
+                      //  console.log("Matched term for audio:", matchedEntry.word);
                     } else {
-                        console.warn("No matching definition found for:", answerText);
+                       // console.warn("No matching definition found for:", answerText);
                     }
 
                     
                 });
             } else {
-                console.log("No audio buttons found");
+               // console.log("No audio buttons found");
             }
             const potPrompt = document.querySelector(".session-title p");       
-            console.log("Pot prompt: ", potPrompt);    
+           // console.log("Pot prompt: ", potPrompt);    
              
             const promptSpanish = wordsAndDefinitions.find(item => item.definition === potPrompt.innerText.toLowerCase());
             if (promptSpanish) {
@@ -149,8 +149,8 @@
     }else{
         const prompt = promptElement.innerText.trim();     
         const potPrompt = document.getElementsByClassName(".session-title p");    
-        console.log("Prompt:", prompt);     
-        console.log("Pot prompt: ", potPrompt);    
+       // console.log("Prompt:", prompt);     
+        //console.log("Pot prompt: ", potPrompt);    
         clearPreviousActions();   
         const promptSpanish = wordsAndDefinitions.find(item => item.definition === potPrompt);
         if (promptSpanish) {
@@ -160,7 +160,7 @@
 
 
         let answerFound = false;          
-        console.log("answer not found");
+   //     console.log("answer not found");
         const forwardEntry = wordsAndDefinitions.find(item => item.word === prompt);         
         if (forwardEntry) {             
             answerFound = fillOrHighlightAnswer(forwardEntry.definition);         
@@ -191,12 +191,20 @@
                 button.style.backgroundColor = "#28a745";                  
                 button.style.color = "white";                 
                 lastHighlightedButton = button;                 
-                console.log(`Correct Answer Highlighted: ${answerText}`);                 
-                answerFound = true;             
+               // console.log(`Correct Answer Highlighted: ${answerText}`);                 
+                answerFound = true;           
+                setTimeout(() => {                     
+                    button.click(); 
+                    console.log("Button clicked");           
+                    const nextButton = document.querySelector(".button-next");     
+                    setTimeout(() => {                         
+                        nextButton.click();
+                    },500);   
+                },500);  
             }         
         });         
         const inputBox = document.querySelector(".session-typing input");         
-        if (inputBox) {             
+        if (inputBox && inputBox.value !== correctAnswer) {             
             simulateTyping(inputBox, correctAnswer);             
             answerFound = true;         
         }          
@@ -247,7 +255,7 @@
             });              
 
             observer.observe(document.body, { childList: true, subtree: true });             
-            console.log("Auto-Solve is now running...");         
+     //       console.log("Auto-Solve is now running...");         
         }     
     }      
 
