@@ -215,7 +215,10 @@
     function simulateTyping(inputElement, value) {         
         clearTyping();          
 
-        inputElement.value = "";          
+        if (value !== inputElement.value) {
+            inputElement.value = "";     
+        }
+             
 
         inputElement.focus();         
         value.split("").forEach((char, index) => {             
