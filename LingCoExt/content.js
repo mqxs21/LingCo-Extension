@@ -41,7 +41,10 @@
         };    
              
         popup.appendChild(toggleButton);        
-        appendPopupContents(popup);         
+        appendPopupContents(popup);        
+        
+
+        
         document.body.appendChild(popup);     
     }      
 
@@ -83,6 +86,59 @@
         
         const audioLabel = document.createElement("label");
         audioLabel.innerText = "Null";
+
+        const practiceQuestionButton = document.createElement("button");
+        practiceQuestionButton.style.height = "auto";
+        practiceQuestionButton.style.width = "60px";
+        practiceQuestionButton.innerText = "get question";
+        practiceQuestionButton.style.marginTop = "6px";
+        practiceQuestionButton.onclick = () => {
+            const practiceQuestionEle = document.querySelector(".flex-grow-1");
+            let output = ""; // Variable to store the final output
+            
+            if (practiceQuestionEle) {
+                const practiceQuestionText = practiceQuestionEle.innerText;
+                console.log("Practice Question: ", practiceQuestionText);
+                output += `Practice Question: ${practiceQuestionText}\n`; // Add to output
+            } else {
+                console.log("Practice question element not found.");
+                output += "Practice question element not found.\n"; // Add to output
+            }
+        
+            // Select only the answer choice paragraphs (exclude question text)
+            const answerChoices = document.querySelectorAll(".align-items-center p");
+            if (answerChoices.length > 0) {
+                console.log("Answer Choices:");
+                output += "Answer Choices:\n"; // Add to output
+                answerChoices.forEach((choice, index) => {
+                    // Avoid logging the first element if it contains the question text
+                    if (!choice.innerText.includes("______")) {
+                        console.log(`${index + 1}: ${choice.innerText}`);
+                        output += `${index + 1}: ${choice.innerText}\n`; // Add to output
+                    }
+                });
+            } else {
+                console.log("No answer choices found.");
+                output += "No answer choices found.\n"; // Add to output
+            }
+        
+            const fillInTheBlankPrompt = document.querySelector(".fill-blanks-form p");
+            if (fillInTheBlankPrompt) {
+                output += "\n"; 
+                output += "Fill in the blank prompt: ";
+                output += fillInTheBlankPrompt.innerText;
+            }
+           
+            navigator.clipboard.writeText(output)
+                .then(() => {
+                    console.log("Output copied to clipboard.");
+                })
+                .catch(err => {
+                    console.error("Error copying to clipboard: ", err);
+                });
+        };
+        
+        popup.appendChild(practiceQuestionButton);
 
 
     }      
