@@ -1,89 +1,89 @@
-(function () {     
-    const wordsAndDefinitions = [];     
-    let lastHighlightedButton = null;     
-    let observer = null;     
-    let typingTimeouts = [];     
-    let typeSpeed = 5;     
-    let isMinimized = false; 
+(function () {
+    const wordsAndDefinitions = [];
+    let lastHighlightedButton = null;
+    let observer = null;
+    let typingTimeouts = [];
+    let typeSpeed = 5;
+    let isMinimized = false;
 
-    function initializePopup() {         
-        const popup = document.createElement("div");         
-        popup.id = "answer-popup";         
-        popup.style.position = "fixed";         
-        popup.style.top = "6px";         
-        popup.style.right = "6px";         
-        popup.style.backgroundColor = "#fff";         
-        popup.style.border = "1px solid #ddd";         
-        popup.style.padding = "8px";         
-        popup.style.zIndex = 1000;         
-        popup.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";         
-        popup.style.transition = "height 0.3s, width 0.3s";       
-        const toggleButton = document.createElement("button");         
-        toggleButton.innerText = "Minimize";         
-        toggleButton.style.marginBottom = "6px";         
-        toggleButton.onclick = () => {             
-            isMinimized = !isMinimized;             
-            if (isMinimized) {                 
-                popup.style.height = "auto";                 
-                popup.style.width = "60px";                 
-                popup.style.overflow = "hidden";                 
-                popup.innerHTML = "";                 
-                popup.appendChild(toggleButton);                 
-                toggleButton.innerText = "Expand";             
-            } else {                 
-                popup.style.height = "";                 
-                popup.style.width = "";                 
-                popup.innerHTML = "";                 
-                popup.appendChild(toggleButton);                 
-                appendPopupContents(popup);                 
-                toggleButton.innerText = "Close";             
-            }         
-        };    
-             
-        popup.appendChild(toggleButton);        
-        appendPopupContents(popup);        
-        
+    // We'll define this variable so it can be accessed by autoClickStartEngine
+    let autoSolveButton = null;
 
-        
-        document.body.appendChild(popup);     
-    }      
+    function initializePopup() {
+        const popup = document.createElement("div");
+        popup.id = "answer-popup";
+        popup.style.position = "fixed";
+        popup.style.top = "6px";
+        popup.style.right = "6px";
+        popup.style.backgroundColor = "#fff";
+        popup.style.border = "1px solid #ddd";
+        popup.style.padding = "8px";
+        popup.style.zIndex = 1000;
+        popup.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
+        popup.style.transition = "height 0.3s, width 0.3s";
 
-    function appendPopupContents(popup) {         
-        const startButton = document.createElement("button");         
-        startButton.innerText = "Get Words and Def";         
-        startButton.onclick = () => {             
-            getWordsAndDefinitions();         
-        };             
+        const toggleButton = document.createElement("button");
+        toggleButton.innerText = "Minimize";
+        toggleButton.style.marginBottom = "6px";
+        toggleButton.onclick = () => {
+            isMinimized = !isMinimized;
+            if (isMinimized) {
+                popup.style.height = "auto";
+                popup.style.width = "60px";
+                popup.style.overflow = "hidden";
+                popup.innerHTML = "";
+                popup.appendChild(toggleButton);
+                toggleButton.innerText = "Expand";
+            } else {
+                popup.style.height = "";
+                popup.style.width = "";
+                popup.innerHTML = "";
+                popup.appendChild(toggleButton);
+                appendPopupContents(popup);
+                toggleButton.innerText = "Close";
+            }
+        };
 
-        const autoSolveButton = document.createElement("button");         
-        autoSolveButton.innerText = "Start Engine";         
-        autoSolveButton.style.marginLeft = "8px";         
-        autoSolveButton.onclick = () => {             
-            startAutoSolve();         
-        };                  
+        popup.appendChild(toggleButton);
+        appendPopupContents(popup);
 
-        const typeSpeedLabel = document.createElement("label");         
-        typeSpeedLabel.innerText = "Type Speed:";         
-        typeSpeedLabel.style.marginLeft = "5px";         
-        typeSpeedLabel.style.fontSize = "12px";          
+        document.body.appendChild(popup);
+    }
 
-        const typeSpeedInput = document.createElement("input");         
-        typeSpeedInput.type = "number";         
-        typeSpeedInput.value = typeSpeed;         
-        typeSpeedInput.style.width = "60px";           
-        typeSpeedInput.style.fontSize = "12px";           
-        typeSpeedInput.style.marginLeft = "5px";          
+    function appendPopupContents(popup) {
+        const startButton = document.createElement("button");
+        startButton.innerText = "Get Words and Def";
+        startButton.onclick = () => {
+            getWordsAndDefinitions();
+        };
 
-        typeSpeedInput.onchange = () => {             
-            typeSpeed = parseInt(typeSpeedInput.value);             
-          //  console.log("Type Speed:", typeSpeed);         
-        };                   
+        autoSolveButton = document.createElement("button");
+        autoSolveButton.innerText = "Start Engine";
+        autoSolveButton.style.marginLeft = "8px";
+        autoSolveButton.onclick = () => {
+            startAutoSolve();
+        };
 
-        popup.appendChild(startButton);         
-        popup.appendChild(autoSolveButton);         
-        popup.appendChild(typeSpeedLabel);         
-        popup.appendChild(typeSpeedInput);    
-        
+        const typeSpeedLabel = document.createElement("label");
+        typeSpeedLabel.innerText = "Type Speed:";
+        typeSpeedLabel.style.marginLeft = "5px";
+        typeSpeedLabel.style.fontSize = "12px";
+
+        const typeSpeedInput = document.createElement("input");
+        typeSpeedInput.type = "number";
+        typeSpeedInput.value = typeSpeed;
+        typeSpeedInput.style.width = "60px";
+        typeSpeedInput.style.fontSize = "12px";
+        typeSpeedInput.style.marginLeft = "5px";
+        typeSpeedInput.onchange = () => {
+            typeSpeed = parseInt(typeSpeedInput.value);
+        };
+
+        popup.appendChild(startButton);
+        popup.appendChild(autoSolveButton);
+        popup.appendChild(typeSpeedLabel);
+        popup.appendChild(typeSpeedInput);
+
         const audioLabel = document.createElement("label");
         audioLabel.innerText = "Null";
 
@@ -95,40 +95,38 @@
         practiceQuestionButton.onclick = () => {
             const practiceQuestionEle = document.querySelector(".flex-grow-1");
             let output = ""; // Variable to store the final output
-            
+
             if (practiceQuestionEle) {
                 const practiceQuestionText = practiceQuestionEle.innerText;
                 console.log("Practice Question: ", practiceQuestionText);
-                output += `Practice Question: ${practiceQuestionText}\n`; // Add to output
+                output += `Practice Question: ${practiceQuestionText}\n`;
             } else {
                 console.log("Practice question element not found.");
-                output += "Practice question element not found.\n"; // Add to output
+                output += "Practice question element not found.\n";
             }
-        
+
             // Select only the answer choice paragraphs (exclude question text)
             const answerChoices = document.querySelectorAll(".align-items-center p");
             if (answerChoices.length > 0) {
                 console.log("Answer Choices:");
-                output += "Answer Choices:\n"; // Add to output
+                output += "Answer Choices:\n";
                 answerChoices.forEach((choice, index) => {
-                    // Avoid logging the first element if it contains the question text
                     if (!choice.innerText.includes("______")) {
                         console.log(`${index + 1}: ${choice.innerText}`);
-                        output += `${index + 1}: ${choice.innerText}\n`; // Add to output
+                        output += `${index + 1}: ${choice.innerText}\n`;
                     }
                 });
             } else {
                 console.log("No answer choices found.");
-                output += "No answer choices found.\n"; // Add to output
+                output += "No answer choices found.\n";
             }
-        
+
             const fillInTheBlankPrompt = document.querySelector(".fill-blanks-form p");
             if (fillInTheBlankPrompt) {
-                output += "\n"; 
-                output += "Fill in the blank prompt: ";
+                output += "\nFill in the blank prompt: ";
                 output += fillInTheBlankPrompt.innerText;
             }
-           
+
             navigator.clipboard.writeText(output)
                 .then(() => {
                     console.log("Output copied to clipboard.");
@@ -137,186 +135,173 @@
                     console.error("Error copying to clipboard: ", err);
                 });
         };
-        
+
         popup.appendChild(practiceQuestionButton);
+    }
 
+    function getWordsAndDefinitions() {
+        wordsAndDefinitions.length = 0;
 
-    }      
+        const vocabElements = document.querySelectorAll(".vocab-set-term, .session-title");
+        vocabElements.forEach(term => {
+            const word = term.querySelector(".title, p")?.innerText.trim();
+            const definition = term.querySelector(".definition")?.innerText.trim();
 
-    function getWordsAndDefinitions() {         
-        wordsAndDefinitions.length = 0;          
+            if (word && definition) {
+                wordsAndDefinitions.push({ word, definition });
+            }
+        });
 
-        const vocabElements = document.querySelectorAll(".vocab-set-term, .session-title");         
-        vocabElements.forEach(term => {             
-            const word = term.querySelector(".title, p")?.innerText.trim();             
-            const definition = term.querySelector(".definition")?.innerText.trim();              
-
-            if (word && definition) {                 
-                wordsAndDefinitions.push({ word, definition });             
-            }         
-        });          
-
-       // console.log("Words and Definitions:", wordsAndDefinitions);         
-        localStorage.setItem("wordsAndDefinitions", JSON.stringify(wordsAndDefinitions));          
-
-        alert(`Collected ${wordsAndDefinitions.length} words and definitions.`);     
-    }      
+        localStorage.setItem("wordsAndDefinitions", JSON.stringify(wordsAndDefinitions));
+        alert(`Collected ${wordsAndDefinitions.length} words and definitions.`);
+    }
 
     function solveQuestion() {
         const promptElement = document.querySelector(".session-title p");
         const answerButtons = document.querySelectorAll(".session-answer-choices button");
-    
+
         const audioPrompt = document.querySelector(".session-audio-button-new");
         if (audioPrompt) {
-         //   console.log("Audio prompt found:", audioPrompt);
-    
-            const audioButtons = document.querySelectorAll(".btn.line.full-width");
-            if (audioButtons && audioButtons.length > 0) {
-              //  console.log("Audio buttons found:", audioButtons);
-    
-              answerButtons.forEach(button => {
-                    const answerText = button.innerText.trim().toLowerCase();
-                    const ogText = answerText;
-                    const matchedEntry = wordsAndDefinitions.find(
-                        item => item.definition.toLowerCase() === answerText
-                    );
-    
-                    if (matchedEntry) {
-                        const matchedWord = document.createElement("span");
-                        matchedWord.innerText = ` (${matchedEntry.word})`;
-                        button.appendChild(matchedWord);
-                      //  console.log("Matched term for audio:", matchedEntry.word);
-                    } else {
-                       // console.warn("No matching definition found for:", answerText);
-                    }
+            // We have an audio-based question
+            answerButtons.forEach(button => {
+                const answerText = button.innerText.trim().toLowerCase();
+                const matchedEntry = wordsAndDefinitions.find(
+                    item => item.definition.toLowerCase() === answerText
+                );
+                if (matchedEntry) {
+                    const matchedWord = document.createElement("span");
+                    matchedWord.innerText = ` (${matchedEntry.word})`;
+                    button.appendChild(matchedWord);
+                }
+            });
 
-                    
-                });
-            } else {
-               // console.log("No audio buttons found");
-            }
-            const potPrompt = document.querySelector(".session-title p");       
-           // console.log("Pot prompt: ", potPrompt);    
-             
-            const promptSpanish = wordsAndDefinitions.find(item => item.definition === potPrompt.innerText.toLowerCase());
+            // Attempt auto-solve after matching
+            autoSolveButton.click();
+            setTimeout(() => {
+                autoSolveButton.click();
+            }, 500);
+
+            // Append Spanish if we can match
+            const potPrompt = document.querySelector(".session-title p");
+            const promptSpanish = wordsAndDefinitions.find(
+                item => item.definition === potPrompt.innerText.toLowerCase()
+            );
             if (promptSpanish) {
                 potPrompt.innerText = `${potPrompt.innerText} (${promptSpanish.word})`;
             }
-    }else{
-        const prompt = promptElement.innerText.trim();     
-        const potPrompt = document.getElementsByClassName(".session-title p");    
-       // console.log("Prompt:", prompt);     
-        //console.log("Pot prompt: ", potPrompt);    
-        clearPreviousActions();   
-        const promptSpanish = wordsAndDefinitions.find(item => item.definition === potPrompt);
-        if (promptSpanish) {
-            potPrompt.innerText = `${potPrompt.innerText} (${promptSpanish.word})`;
+        } else {
+            // Non-audio-based question
+            clearPreviousActions();
+
+            const prompt = promptElement.innerText.trim();
+            const forwardEntry = wordsAndDefinitions.find(item => item.word === prompt);
+            const backwardEntry = wordsAndDefinitions.find(item => item.definition === prompt);
+
+            let answerFound = false;
+
+            if (forwardEntry) {
+                answerFound = fillOrHighlightAnswer(forwardEntry.definition);
+            }
+            if (!answerFound && backwardEntry) {
+                answerFound = fillOrHighlightAnswer(backwardEntry.word);
+            }
+            if (!answerFound) {
+                console.warn("Correct answer not found among the choices.");
+            }
         }
-       
+    }
 
+    function fillOrHighlightAnswer(correctAnswer) {
+        const answerButtons = document.querySelectorAll(".session-answer-choices button");
+        let answerFound = false;
 
-        let answerFound = false;          
-   //     console.log("answer not found");
-        const forwardEntry = wordsAndDefinitions.find(item => item.word === prompt);         
-        if (forwardEntry) {             
-            answerFound = fillOrHighlightAnswer(forwardEntry.definition);         
-        }          
+        answerButtons.forEach(button => {
+            const answerText = button.innerText.trim().toLowerCase();
+            if (answerText === correctAnswer.toLowerCase()) {
+                button.style.backgroundColor = "#28a745";
+                button.style.color = "white";
+                lastHighlightedButton = button;
+                button.click();
 
-        const backwardEntry = wordsAndDefinitions.find(item => item.definition === prompt);         
-        if (backwardEntry) {             
-            answerFound = fillOrHighlightAnswer(backwardEntry.word);         
-        }          
+                setTimeout(() => {
+                    button.click(); // second click
+                    const nextButton = document.querySelector(".button-next");
+                    setTimeout(() => {
+                        nextButton && nextButton.click();
+                    }, 500);
+                }, 500);
 
-        if (!answerFound) {             
-            console.warn("Correct answer not found among the choices.");         
-        }     
-       }
-        
+                answerFound = true;
+            }
+        });
 
+        const inputBox = document.querySelector(".session-typing input");
+        if (inputBox && inputBox.value !== correctAnswer) {
+            simulateTyping(inputBox, correctAnswer);
+            answerFound = true;
+        }
 
-        
-    }      
+        return answerFound;
+    }
 
-    function fillOrHighlightAnswer(correctAnswer) {         
-        const answerButtons = document.querySelectorAll(".session-answer-choices button");         
-        let answerFound = false;          
+    function simulateTyping(inputElement, value) {
+        clearTyping();
 
-        answerButtons.forEach(button => {             
-            const answerText = button.innerText.trim().toLowerCase();             
-            if (answerText === correctAnswer.toLowerCase()) {                 
-                button.style.backgroundColor = "#28a745";                  
-                button.style.color = "white";                 
-                lastHighlightedButton = button;                 
-               // console.log(`Correct Answer Highlighted: ${answerText}`);                 
-                answerFound = true;           
-                setTimeout(() => {                     
-                    button.click(); 
-                    console.log("Button clicked");           
-                    const nextButton = document.querySelector(".button-next");     
-                    setTimeout(() => {                         
-                        nextButton.click();
-                    },500);   
-                },500);  
-            }         
-        });         
-        const inputBox = document.querySelector(".session-typing input");         
-        if (inputBox && inputBox.value !== correctAnswer) {             
-            simulateTyping(inputBox, correctAnswer);             
-            answerFound = true;         
-        }          
-
-        return answerFound;     
-    }      
-
-    function simulateTyping(inputElement, value) {         
-        clearTyping();          
-
+        // Optionally clear the input first
         if (value !== inputElement.value) {
-            inputElement.value = "";     
+            inputElement.value = "";
         }
-             
 
-        inputElement.focus();         
-        value.split("").forEach((char, index) => {             
-            const timeout = setTimeout(() => {                 
-                inputElement.value += char;                 
-                inputElement.dispatchEvent(new Event("input", { bubbles: true }));             
-            }, index * (100/typeSpeed));              
+        inputElement.focus();
+        value.split("").forEach((char, index) => {
+            const timeout = setTimeout(() => {
+                inputElement.value += char;
+                inputElement.dispatchEvent(new Event("input", { bubbles: true }));
+            }, index * (100 / typeSpeed));
+            typingTimeouts.push(timeout);
+        });
 
-            typingTimeouts.push(timeout);          
-        });          
+        const finalTimeout = setTimeout(() => {
+            inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+        }, value.length * (100 / typeSpeed) + 100);
 
-        const finalTimeout = setTimeout(() => {             
-            inputElement.dispatchEvent(new Event("change", { bubbles: true }));         
-        }, value.length * 50 + 100);         
-        typingTimeouts.push(finalTimeout);     
-    }      
+        typingTimeouts.push(finalTimeout);
+    }
 
-    function clearTyping() {         
-        typingTimeouts.forEach(timeout => clearTimeout(timeout));         
-        typingTimeouts = [];     
-    }      
+    function clearTyping() {
+        typingTimeouts.forEach(timeout => clearTimeout(timeout));
+        typingTimeouts = [];
+    }
 
-    function clearPreviousActions() {         
-        if (lastHighlightedButton) {             
-            lastHighlightedButton.style.backgroundColor = "";             
-            lastHighlightedButton.style.color = "";             
-            lastHighlightedButton = null;         
-        }         
-        clearTyping();     
-    }      
+    function clearPreviousActions() {
+        if (lastHighlightedButton) {
+            lastHighlightedButton.style.backgroundColor = "";
+            lastHighlightedButton.style.color = "";
+            lastHighlightedButton = null;
+        }
+        clearTyping();
+    }
 
-    function startAutoSolve() {         
-        solveQuestion();         
-        if (!observer) {             
-            observer = new MutationObserver(() => {                          
-                solveQuestion();             
-            });              
+    function startAutoSolve() {
+        solveQuestion();
+        if (!observer) {
+            observer = new MutationObserver(() => {
+                solveQuestion();
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    }
 
-            observer.observe(document.body, { childList: true, subtree: true });             
-     //       console.log("Auto-Solve is now running...");         
-        }     
-    }      
+    // This function repeatedly clicks the Start Engine button
+    function autoClickStartEngine() {
+        if (autoSolveButton) {
+            autoSolveButton.click();
+        }
+        setTimeout(() => autoClickStartEngine(), 600);
+    }
 
-    initializePopup(); 
+    // 1. Initialize the popup (creates the Start Engine button).
+    // 2. Then begin the autoClick loop.
+    initializePopup();
+    autoClickStartEngine();
 })();
