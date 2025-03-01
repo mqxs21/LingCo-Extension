@@ -5,6 +5,7 @@
     let typingTimeouts = [];
     let typeSpeed = 5;
     let isMinimized = false;
+    let currentQuestionType = "mcq";
 
     // We'll define this variable so it can be accessed by autoClickStartEngine
     let autoSolveButton = null;
@@ -163,6 +164,7 @@
         const audioPrompt = document.querySelector(".session-audio-button-new");
         if (audioPrompt) {
             // We have an audio-based question
+            currentQuestionType = "audio";
             answerButtons.forEach(button => {
                 const answerText = button.innerText.trim().toLowerCase();
                 const matchedEntry = wordsAndDefinitions.find(
@@ -216,6 +218,7 @@
         let answerFound = false;
 
         answerButtons.forEach(button => {
+            currentQuestionType = "mcq";
             const answerText = button.innerText.trim().toLowerCase();
             if (answerText === correctAnswer.toLowerCase()) {
                 button.style.backgroundColor = "#28a745";
@@ -237,6 +240,7 @@
 
         const inputBox = document.querySelector(".session-typing input");
         if (inputBox && inputBox.value !== correctAnswer) {
+            currentQuestionType = "typing";
             simulateTyping(inputBox, correctAnswer);
             answerFound = true;
         }
@@ -294,7 +298,7 @@
 
     // This function repeatedly clicks the Start Engine button
     function autoClickStartEngine() {
-        if (autoSolveButton) {
+        if (autoSolveButton && currentQuestionType === "mcq") {
             autoSolveButton.click();
         }
         setTimeout(() => autoClickStartEngine(), 600);
