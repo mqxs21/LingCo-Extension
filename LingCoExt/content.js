@@ -89,10 +89,11 @@
         audioLabel.innerText = "Null";
 
         const practiceQuestionButton = document.createElement("button");
-        practiceQuestionButton.style.height = "auto";
-        practiceQuestionButton.style.width = "60px";
-        practiceQuestionButton.innerText = "get question";
-        practiceQuestionButton.style.marginTop = "6px";
+        practiceQuestionButton.style.height = "40px";
+        practiceQuestionButton.style.width = "120px";
+        practiceQuestionButton.style.margin = "13px";
+        practiceQuestionButton.innerText = "Copy Ques.Clipboard";
+        practiceQuestionButton.style.fontSize = "10px";
         practiceQuestionButton.onclick = () => {
             const practiceQuestionEle = document.querySelector(".flex-grow-1");
             let output = ""; // Variable to store the final output
