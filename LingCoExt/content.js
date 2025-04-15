@@ -143,8 +143,10 @@
 
     function getWordsAndDefinitions() {
         wordsAndDefinitions.length = 0;
-
+        //test
+        //testagain
         const vocabElements = document.querySelectorAll(".vocab-set-term, .session-title");
+        const test = 1;
         vocabElements.forEach(term => {
             const word = term.querySelector(".title, p")?.innerText.trim();
             const definition = term.querySelector(".definition")?.innerText.trim();
